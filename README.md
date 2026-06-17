@@ -16,3 +16,9 @@ Tech Stack:
 * SQLAlchemy
 * JWT
 * Passlib
+
+## 🚀 Version 2.0 Update
+
+- Added pagination to tasks API
+- Added filtering by title and status
+- Improved API performance and structure
