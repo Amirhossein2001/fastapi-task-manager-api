@@ -46,18 +46,32 @@ def create_task(
 
     return new_task
 
-
 @app.get("/tasks")
 def get_tasks(
+    page: int = 1,
+    limit: int = 10,
+    done: bool = None,
+    title: str = None,
     db: Session = Depends(get_db),
     user: str = Depends(get_current_user)
 ):
     db_user = db.query(User).filter(User.username == user).first()
 
-    tasks = db.query(Task).filter(Task.user_id == db_user.id).all()
+    offset = (page - 1) * limit
+
+    query = db.query(Task).filter(Task.user_id == db_user.id)
+
+    # 🔥 Filter 1: done or not done
+    if done is not None:
+        query = query.filter(Task.done == done)
+
+    # 🔥 Filter 2: search by title
+    if title:
+        query = query.filter(Task.title.contains(title))
+
+    tasks = query.offset(offset).limit(limit).all()
 
     return tasks
-
 
 @app.delete("/tasks/{task_id}")
 def delete_task(
